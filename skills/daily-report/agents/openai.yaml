@@ -1,0 +1,4 @@
+interface:
+  display_name: "Daily Report"
+  short_description: "Draft a casual daily GitHub work report"
+  default_prompt: "Use $daily-report to generate a casual Chinese daily report for my previous workday's GitHub activity."

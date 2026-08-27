@@ -1,0 +1,4 @@
+interface:
+  display_name: "Weekly Report"
+  short_description: "Draft a weekly report from GitHub PRs and releases"
+  default_prompt: "Use $weekly-report to generate my Zhoubao from last week's GitHub PR and release activity."
