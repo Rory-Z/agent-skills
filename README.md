@@ -6,6 +6,8 @@ Personal Codex/agent skills managed from one Git repository.
 skills/
 ├── daily-report/
 ├── emqx-pr/
+├── pr-fix-loop/
+├── pr-review-loop/
 └── weekly-report/
 ```
 
@@ -19,6 +21,8 @@ agent:
 ln -s /path/to/agent-skills/skills/daily-report ~/.codex/skills/daily-report
 ln -s /path/to/agent-skills/skills/weekly-report ~/.codex/skills/weekly-report
 ln -s /path/to/agent-skills/skills/emqx-pr ~/.agents/skills/emqx-pr
+ln -s /path/to/agent-skills/skills/pr-review-loop ~/.codex/skills/pr-review-loop
+ln -s /path/to/agent-skills/skills/pr-fix-loop ~/.codex/skills/pr-fix-loop
 ```
 
 Add future skills under `skills/<skill-name>/`, then create the matching link.
