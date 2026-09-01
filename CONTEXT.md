@@ -28,6 +28,22 @@ _Avoid_: Fix round, repair run
 One invocation of the PR fix workflow that may perform multiple Fix Cycles until it observes a Pass Signal or blocker.
 _Avoid_: Fixer, repair process
 
+**Non-convergent Review/Fix Interaction**:
+A pull-request state where the initial three Fix Cycles, or the three Fix Cycles of an active Recovery Epoch, are followed by another changes-requested Review Result. It requires renewed human judgment rather than another automatic fix.
+_Avoid_: Review churn, endless loop
+
+**Recovery Epoch**:
+A same-pull-request recovery stage opened after a Non-convergent Review/Fix Interaction and bounded to at most three further Fix Cycles.
+_Avoid_: Cycle reset, retry window
+
+**Recovery Decision**:
+The outcome of manual recovery grilling that either rejects another Recovery Epoch or states what changed and why another bounded epoch may converge.
+_Avoid_: Retry rationale, continue instruction
+
+**Recovery Authorization**:
+A GitHub-visible form of a confirmed Recovery Decision, published by the PR fix workflow and bound to one exact pull-request head and its entire Effective Review Result. It opens one Recovery Epoch.
+_Avoid_: Continue instruction, approval
+
 **Trusted Reviewer**:
 The current GitHub identity or an explicitly allowlisted GitHub login whose Review Results may drive a Fix Cycle.
 _Avoid_: Collaborator, commenter
