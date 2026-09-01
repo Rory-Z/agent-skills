@@ -126,4 +126,4 @@ After `changes-requested`, run [scripts/wait-for-head.sh](scripts/wait-for-head.
 scripts/wait-for-head.sh <owner/repo> <pr-number> <REVIEWED_HEAD>
 ```
 
-Keep the helper in the foreground; never detach it with `&`, `nohup`, or a service manager. It reads GitHub every ten minutes without invoking an LLM. On `head<TAB><sha>`, synchronize the clean worktree and begin another Review Cycle. Stop on `closed`, three consecutive read failures, `pass`, or `blocked`.
+Keep the helper in the foreground; never detach it with `&`, `nohup`, or a service manager. If the command runner yields a live terminal session while the helper is still running, keep this agent turn open and poll that same session until the helper exits. Do not send a final answer or mark the task complete while that session is live. It reads GitHub every ten minutes without invoking an LLM. On `head<TAB><sha>`, synchronize the clean worktree and begin another Review Cycle. Stop on `closed`, three consecutive read failures, `pass`, or `blocked`.
