@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/recovery-authorization.sh"
+
 if [[ "$#" -lt 3 ]]; then
   echo "usage: resolve-recovery-state.sh <owner/repo> <pr-number> <trusted-login>..." >&2
   exit 64
@@ -17,32 +20,6 @@ is_trusted() {
     [[ "$candidate" == "$trusted" ]] && return 0
   done
   return 1
-}
-
-is_meaningful_decision() {
-  local decision="$1" normalized
-  normalized="${decision#"${decision%%[![:space:]]*}"}"
-  normalized="${normalized%"${normalized##*[![:space:]]}"}"
-  [[ -n "$normalized" ]] || return 1
-  case "${normalized,,}" in
-    continue*|try\ again*|retry*|proceed*|go\ ahead*|resume*|keep\ going*|keep\ fixing*|carry\ on*|move\ forward*|run\ again*|rerun*|do\ not\ recover*|继续*|再试一次*|授权*继续修复*)
-      return 1
-      ;;
-  esac
-  return 0
-}
-
-has_substance() {
-  local text="$1" normalized compact
-  normalized="${text#"${text%%[![:space:]]*}"}"
-  normalized="${normalized%"${normalized##*[![:space:]]}"}"
-  compact="${normalized//[[:space:]]/}"
-  [[ "${#compact}" -ge 8 ]] || return 1
-  case "${normalized,,}" in
-    '<'*'>'|'['*']'|x|xx|xxx|foo|bar|baz|none|n/a|na|tbd*|todo*|unknown|placeholder)
-      return 1
-      ;;
-  esac
 }
 
 fetch() {
@@ -178,10 +155,10 @@ auth_records="$(jq -r '
 while IFS=$'\t' read -r auth_head auth_result auth_id auth_author decision_text change_text convergence_basis; do
   [[ "${auth_id:-}" =~ ^[0-9]+$ ]] || continue
   [[ "$auth_author" == "$current_login" ]] || continue
-  is_meaningful_decision "$decision_text" || continue
-  has_substance "$change_text" || continue
-  has_substance "$convergence_basis" || continue
-  has_substance "$decision_text" || continue
+  recovery_decision_is_meaningful "$decision_text" || continue
+  recovery_field_has_substance "$change_text" || continue
+  recovery_field_has_substance "$convergence_basis" || continue
+  recovery_field_has_substance "$decision_text" || continue
   [[ -n "${result_head[$auth_result]:-}" ]] || continue
   [[ "${result_head[$auth_result]}" == "$auth_head" ]] || continue
   [[ "${result_verdict[$auth_result]}" == changes-requested ]] || continue
