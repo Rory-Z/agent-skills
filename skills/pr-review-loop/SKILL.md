@@ -15,6 +15,7 @@ Review every new pull-request head in the current Review Session without inherit
 ## Boundaries
 
 - Run from the same-repository PR head branch. Support one active Review Session per PR.
+- **Inspection-only:** review repository sources and existing evidence. Do not run local tests, linters, builds, formatters, type checks, or validation commands.
 - Never read PR conversation comments, review bodies, inline comments, or their markers. Linked issue comments remain available to `$code-review` as spec evidence.
 - Do not choose or rotate models. The Codex session owns model selection.
 - Do not checkout, stash, reset, rebase, force-push, merge, edit code, or change PR metadata.
@@ -29,8 +30,8 @@ Review every new pull-request head in the current Review Session without inherit
 ## Review Cycle
 
 1. Capture the exact PR head SHA as `REVIEWED_HEAD`.
-2. Use `$code-review` against `<fixed-point>...HEAD`. Pass `--spec` when supplied. If its normal discovery finds no Spec, do not pause the monitoring workflow to ask for one; classify the Review Cycle as blocked.
-3. Independently use `$ponytail:ponytail-review` against the same diff. Do not feed either review's conclusions into the other.
+2. Use `$code-review` against `<fixed-point>...HEAD`, passing the Inspection-only boundary to both review sub-agents. Pass `--spec` when supplied. If its normal discovery finds no Spec, do not pause the monitoring workflow to ask for one; classify the Review Cycle as blocked.
+3. Independently use `$ponytail:ponytail-review` against the same diff with the Inspection-only boundary. Do not feed either review's conclusions into the other.
 4. Separate the review output into **Blocking findings** and **Advisories**. A finding blocks only when it identifies at least one of:
    - a documented repository-standard violation;
    - a concrete Spec omission, incorrect implementation, or scope violation;
