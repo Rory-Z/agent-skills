@@ -8,6 +8,7 @@ skills/
 ├── emqx-pr/
 ├── pr-fix-loop/
 ├── pr-review-loop/
+├── pr-review-once/
 └── weekly-report/
 ```
 
@@ -22,6 +23,7 @@ ln -s /path/to/agent-skills/skills/daily-report ~/.codex/skills/daily-report
 ln -s /path/to/agent-skills/skills/weekly-report ~/.codex/skills/weekly-report
 ln -s /path/to/agent-skills/skills/emqx-pr ~/.agents/skills/emqx-pr
 ln -s /path/to/agent-skills/skills/pr-review-loop ~/.codex/skills/pr-review-loop
+ln -s /path/to/agent-skills/skills/pr-review-once ~/.codex/skills/pr-review-once
 ln -s /path/to/agent-skills/skills/pr-fix-loop ~/.codex/skills/pr-fix-loop
 ```
 
@@ -32,7 +34,14 @@ ln -s /path/to/agent-skills/skills/daily-report ~/.agents/skills/daily-report
 ln -s /path/to/agent-skills/skills/weekly-report ~/.agents/skills/weekly-report
 ln -s /path/to/agent-skills/skills/emqx-pr ~/.agents/skills/emqx-pr
 ln -s /path/to/agent-skills/skills/pr-review-loop ~/.agents/skills/pr-review-loop
+ln -s /path/to/agent-skills/skills/pr-review-once ~/.agents/skills/pr-review-once
 ln -s /path/to/agent-skills/skills/pr-fix-loop ~/.agents/skills/pr-fix-loop
 ```
 
 Add future skills under `skills/<skill-name>/`, then create the matching link.
+
+Use `pr-review-once` for one single-agent Review Cycle across Standards, Spec,
+and Ponytail. It publishes the same SHA-bound result protocol as `pr-review-loop`
+and stops; invoke it again to review a successor head. `pr-review-loop` retains
+independent review perspectives and automatically reviews new heads after
+changes are requested. Both results can drive `pr-fix-loop`.

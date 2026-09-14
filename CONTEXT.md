@@ -5,7 +5,7 @@ This context defines the language used by reusable agent workflows in this repos
 ## Language
 
 **Review Cycle**:
-An adversarial evaluation of one exact pull-request head revision using both the code-review and Ponytail review perspectives.
+An evaluation of one exact pull-request head revision across Standards, Spec, and Ponytail. The once workflow shares context in one agent; the loop workflow uses independent reviews.
 _Avoid_: Review round, review run
 
 **Review Session**:
