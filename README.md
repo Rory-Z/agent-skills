@@ -41,7 +41,6 @@ ln -s /path/to/agent-skills/skills/pr-fix-loop ~/.agents/skills/pr-fix-loop
 Add future skills under `skills/<skill-name>/`, then create the matching link.
 
 Use `pr-review-once` for one single-agent Review Cycle across Standards, Spec,
-and Ponytail. It publishes the same SHA-bound result protocol as `pr-review-loop`
-and stops; invoke it again to review a successor head. `pr-review-loop` retains
-independent review perspectives and automatically reviews new heads after
-changes are requested. Both results can drive `pr-fix-loop`.
+and Ponytail; it publishes the same SHA-bound result protocol as `pr-review-loop`
+and stops. `pr-review-loop` uses the same single-agent Review Cycle and waits for
+new heads after changes are requested. Both results can drive `pr-fix-loop`.

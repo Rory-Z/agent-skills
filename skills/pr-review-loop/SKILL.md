@@ -1,23 +1,23 @@
 ---
 name: pr-review-loop
-description: Review a pull request from scratch with code-review and Ponytail, publish a SHA-bound Review Result, and wait for new commits. Use for an adversarial PR review loop; do not use to apply fixes.
+description: Review a pull request from scratch with a single agent across Standards, Spec, and Ponytail, publish a SHA-bound Review Result, and wait for new commits. Use for an adversarial PR review loop; do not use to apply fixes.
 ---
 
 # PR Review Loop
 
-Review every new pull-request head in the current Review Session without inheriting conclusions from PR conversation history or earlier Review Sessions.
+Review every new pull-request head in the current Review Session with one agent across Standards, Spec, and Ponytail. Do not inherit conclusions from PR conversation history or earlier Review Sessions.
 
 ## Arguments
 
 - PR number or URL, optional when the current branch already has a PR.
-- `--spec <path>`, optional explicit spec for `$code-review`.
+- `--spec <path>`, optional explicit spec.
 
 ## Boundaries
 
 - Run from the same-repository PR head branch. Support one active Review Session per PR.
 - **Inspection-only:** review repository sources and existing evidence. Do not run local tests, linters, builds, formatters, type checks, or validation commands.
-- Never read PR conversation comments, review bodies, inline comments, or their markers. Linked issue comments remain available to `$code-review` as spec evidence.
-- Do not choose or rotate models. The Codex session owns model selection.
+- Never read PR conversation comments, review bodies, inline comments, or their markers. Linked issue comments remain available as Spec evidence.
+- The current agent owns model selection and the full review context. Do not spawn review sub-agents or invoke `$code-review`, `$ponytail:ponytail-review`, or `$pr-review-once`.
 - Do not checkout, stash, reset, rebase, force-push, merge, edit code, or change PR metadata.
 
 ## Preflight
@@ -30,24 +30,29 @@ Review every new pull-request head in the current Review Session without inherit
 ## Review Cycle
 
 1. Capture the exact PR head SHA as `REVIEWED_HEAD`.
-2. Use `$code-review` against `<fixed-point>...HEAD`, passing the Inspection-only boundary to both review sub-agents. Pass `--spec` when supplied. If its normal discovery finds no Spec, do not pause the monitoring workflow to ask for one; classify the Review Cycle as blocked.
-3. Independently use `$ponytail:ponytail-review` against the same diff with the Inspection-only boundary. Do not feed either review's conclusions into the other.
-4. Separate the review output into **Blocking findings** and **Advisories**. A finding blocks only when it identifies at least one of:
+2. Read repository instructions, relevant domain docs, and standards. Resolve the Spec from `--spec` when supplied; otherwise inspect originating issue references in the PR description and commit messages, using the repository's issue-tracker instructions, then matching spec files under `docs/`, `specs/`, or `.scratch/`. Read linked issues and relevant issue comments. If the Spec is unavailable, classify the Review Cycle as blocked.
+3. Inspect the entire diff once in the current agent, sharing context across these perspectives. Follow affected callers, implementations, contracts, and existing tests as needed to establish behavior; revisit code when a finding needs verification.
+   - **Standards:** identify documented repository-standard violations, citing the rule and source. Treat code smells as advisory judgments; skip style checks already enforced by tooling.
+   - **Spec:** check missing or partial requirements, incorrect implementations, and unrequested scope. Cite the requirement supporting each finding. Trace correctness, safety, and security consequences of the changed behavior, including relevant sibling callers.
+   - **Ponytail:** identify concrete opportunities to delete unnecessary abstractions, speculative flexibility, duplicate code, or custom implementations covered by existing code, stdlib, or native features. State the location, what to cut, and the simpler replacement. Preserve required behavior and safeguards.
+4. Separate the review output into **Blocking findings** and **Advisories**, deduplicating defects without losing their supporting evidence. A finding blocks only when it identifies at least one of:
    - a documented repository-standard violation;
    - a concrete Spec omission, incorrect implementation, or scope violation;
    - a concrete correctness, safety, or security defect attributable to the diff.
 
-   Fowler baseline smells from `$code-review` are always advisories unless separate evidence establishes one of those blocking categories. Every `$ponytail:ponytail-review` finding is advisory; when the same behavior is unrequested scope, state the independently supported Spec finding under Blocking findings rather than promoting the Ponytail text.
+   Code smells and Ponytail suggestions are advisory. When the same behavior is unrequested scope, support the Blocking finding with Spec evidence rather than promoting a simplification preference.
 5. Classify the Review Result:
    - `changes-requested`: at least one Blocking finding exists.
-   - `pass`: both reviews completed and no Blocking finding exists, including when Advisories are present.
-   - `blocked`: the Spec or a required skill is unavailable, the diff is empty, or a review fails.
+   - `pass`: all three perspectives completed and no Blocking finding exists, including when Advisories are present.
+   - `blocked`: the Spec is unavailable, the diff is empty, or the review cannot be completed.
 6. Re-read the PR state and head SHA before publishing. If the PR closed, stop. If the SHA changed, discard the entire Review Result without publishing, synchronize the clean worktree, and start a new Review Cycle.
 7. Publish exactly one new top-level Review Result with `gh pr comment --body-file`. Never edit or delete an earlier Review Result.
 
 For `changes-requested`, preserve the separate review perspectives:
 
 ```md
+Review mode: single agent, looping Review Session
+
 ## Blocking findings
 
 ### Standards
@@ -77,6 +82,8 @@ For `pass`, publish:
 ```md
 LGTM
 
+Review mode: single agent, looping Review Session
+
 ## Blocking findings
 
 None.
@@ -97,6 +104,8 @@ Reviewed head: <REVIEWED_HEAD>
 For `blocked`, keep the two finding classes explicit and end with:
 
 ```md
+Review mode: single agent, looping Review Session
+
 ## Review blocker
 
 <exact blocker>
