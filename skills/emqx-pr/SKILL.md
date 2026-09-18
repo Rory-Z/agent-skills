@@ -27,12 +27,22 @@ This skill prepares and publishes a committed snapshot, optionally tracks it in 
 5. Treat uncommitted requested changes as direct edits. Do not run tests, linters, builds, or other validation here.
 6. Stage only requested files and commit them with a Conventional Commit message. If the worktree is already clean, do not create a no-op commit.
 7. Stop when `<base>...HEAD` is empty, whether or not a PR already exists. Do not create a no-op commit or PR.
-8. For an existing PR, fetch and use its title and body. Otherwise derive a Conventional Commit title and body from the commits, diff, linked issue or spec, and repository PR template. Ask only if materially ambiguous.
+8. Derive a Conventional Commit title and body from the commits, diff, linked issue or spec, and repository PR template. For an existing PR, fetch its title and body first; preserve relevant human-authored context and issue links while updating stale descriptions to match the final change. Ask only if materially ambiguous.
+
+#### PR body
+
+Use the local `/pr` skill when writing or updating the body. If unavailable, use its core structure: `Summary` with the smallest useful diagram, diff-sketch, or tree; `Evidence` with before/after results; and `Merge Danger` with rollback reversibility (one-way or two-way door) and blast radius.
+
+Keep prose brief and use the target repository's domain language. Preserve required repository PR-template sections, mapping this content into them when their headings differ.
+
+Use evidence already available from implementation or verification, identifying the command and revision when known. Mark missing before/after evidence or unrun checks explicitly; distinguish illustrative sketches from observed output. Body preparation does not trigger additional test runs or imply that pending CI passed.
+
+Write the body to a temporary Markdown file for `--body-file`, preserving literal code fences and newlines.
 
 ### 2. Push and create or find the PR
 
 1. Push the prepared committed snapshot with `git push -u origin HEAD`.
-2. Create the PR with `gh pr create --base <base> --head <branch> --title "<title>" --body "<body>"`. If one already exists, fetch it with `gh pr view --json number,url,title,body,headRefOid` and continue.
+2. Create the PR with `gh pr create --base <base> --head <branch> --title "<title>" --body-file <body-file>`. If one already exists, fetch it with `gh pr view --json number,url,title,body,headRefOid`; apply any prepared title/body changes with `gh pr edit <pr-number> --title "<title>" --body-file <body-file>`.
 3. Assign it to the current GitHub user:
    ```sh
    login=$(gh api user --jq .login)
