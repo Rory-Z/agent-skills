@@ -1,8 +1,12 @@
 ---
-status: accepted
+status: superseded
 ---
 
 # Bound PR fix recovery with explicit epochs
+
+Superseded on 2026-10-27: `pr-fix-loop` now continues across current-head Effective Review Results without a fixed Fix Cycle limit or mandatory recovery interview. The cycle counter, Recovery Authorization protocol, and recovery helpers have been removed. Existing finding, execution, race, and CI retry boundaries still apply.
+
+The original decision below is retained as historical context.
 
 Keep PR review stateless and place all cross-cycle authority in the PR fix workflow. After the initial three Fix Cycles, or three Fix Cycles in a Recovery Epoch, another changes-requested Effective Review Result makes the Fix Session stop with `recovery-required`; the Review Session continues to evaluate only the exact current head and does not read Fix Cycle or Recovery Epoch history.
 

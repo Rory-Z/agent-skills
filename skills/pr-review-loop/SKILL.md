@@ -27,10 +27,16 @@ Review every new pull-request head in the current Review Session without inherit
 3. If the remote head is ahead, fetch and fast-forward the current branch. Stop on divergent history or if local `HEAD` still differs from the PR head SHA.
 4. Fetch the base branch and use `origin/<base>` as the fixed point. Confirm `<fixed-point>...HEAD` is non-empty.
 
+## Scope responsibility
+
+The Review Session owns scope judgments for the diff and requested fixes; the user request and Spec define the scope. For each Blocking finding, explain why it must be addressed in this PR, citing a requirement, a documented standard applicable to the changed code, or a concrete defect attributable to the diff.
+
+Judge scope by required behavior: necessary changes to shared code, affected callers, and regression tests belong to the fix even when those files were absent from the original diff. Keep unrelated pre-existing defects advisory. Expanding the requested behavior requires a user decision.
+
 ## Review Cycle
 
 1. Capture the exact PR head SHA as `REVIEWED_HEAD`.
-2. Use `$code-review` against `<fixed-point>...HEAD`, passing the Inspection-only boundary to both review sub-agents. Pass `--spec` when supplied. If its normal discovery finds no Spec, do not pause the monitoring workflow to ask for one; classify the Review Cycle as blocked.
+2. Use `$code-review` against `<fixed-point>...HEAD`, passing the Inspection-only boundary and Scope responsibility criteria to both review sub-agents. Pass `--spec` when supplied. If its normal discovery finds no Spec, do not pause the monitoring workflow to ask for one; classify the Review Cycle as blocked.
 3. Independently use `$ponytail:ponytail-review` against the same diff with the Inspection-only boundary. Do not feed either review's conclusions into the other.
 4. Separate the review output into **Blocking findings** and **Advisories**. A finding blocks only when it identifies at least one of:
    - a documented repository-standard violation;
