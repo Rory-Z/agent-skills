@@ -25,6 +25,12 @@ Perform one Review Cycle in the current agent. Build one shared understanding of
 2. Require the current branch to equal the PR head branch and the worktree to be clean. If the remote head is ahead, fetch and fast-forward only. Stop on divergent history or if local `HEAD` still differs from the remote head.
 3. Fetch the base branch. Capture its commit SHA as `REVIEWED_BASE` and the exact PR head SHA as `REVIEWED_HEAD`. Use `git diff <REVIEWED_BASE>...<REVIEWED_HEAD>` and the corresponding commit list throughout this Review Cycle.
 
+## Scope responsibility
+
+The Review Session owns scope judgments for the diff and requested fixes; the user request and Spec define the scope. For each Blocking finding, explain why it must be addressed in this PR, citing a requirement, a documented standard applicable to the changed code, or a concrete defect attributable to the diff.
+
+Judge scope by required behavior: necessary changes to shared code, affected callers, and regression tests belong to the fix even when those files were absent from the original diff. Keep unrelated pre-existing defects advisory. Expanding the requested behavior requires a user decision.
+
 ## Review
 
 Read the repository instructions, relevant domain docs and standards. Resolve the Spec from `--spec` when supplied; otherwise inspect originating issue references in the PR description and commit messages, using the repository's issue-tracker instructions, then matching spec files under `docs/`, `specs/`, or `.scratch/`. Read linked issues and relevant issue comments. An unavailable explicit spec is a blocker, not permission to substitute another source.

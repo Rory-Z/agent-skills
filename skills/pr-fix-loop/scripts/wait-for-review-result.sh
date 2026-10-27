@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+once=false
+if [[ "${1:-}" == --once ]]; then
+  once=true
+  shift
+fi
+
 if [[ "$#" -lt 3 ]]; then
-  echo "usage: wait-for-review-result.sh <owner/repo> <pr-number> <trusted-login>..." >&2
+  echo "usage: wait-for-review-result.sh [--once] <owner/repo> <pr-number> <trusted-login>..." >&2
   exit 64
 fi
 
@@ -22,6 +28,10 @@ is_trusted() {
 
 retry_or_exit() {
   local error="$1"
+  if $once; then
+    echo "GitHub read failed: $error" >&2
+    exit 2
+  fi
   failures=$((failures + 1))
   if (( failures >= 3 )); then
     echo "GitHub read failed three times: $error" >&2
@@ -81,6 +91,11 @@ while :; do
 
   if (( latest_id > 0 )); then
     printf 'review\t%s\t%s\t%s\t%s\n' "$head" "$latest_verdict" "$latest_id" "$latest_author"
+    exit 0
+  fi
+
+  if $once; then
+    printf 'waiting\t%s\n' "$head"
     exit 0
   fi
 
