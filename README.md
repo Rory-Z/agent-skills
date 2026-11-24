@@ -6,6 +6,7 @@ Personal Codex/agent skills managed from one Git repository.
 skills/
 ├── daily-report/
 ├── emqx-pr/
+├── optimize-github-ci/
 ├── pr-fix-loop/
 ├── pr-review-loop/
 ├── pr-review-once/
@@ -22,6 +23,7 @@ agent:
 ln -s /path/to/agent-skills/skills/daily-report ~/.codex/skills/daily-report
 ln -s /path/to/agent-skills/skills/weekly-report ~/.codex/skills/weekly-report
 ln -s /path/to/agent-skills/skills/emqx-pr ~/.agents/skills/emqx-pr
+ln -s /path/to/agent-skills/skills/optimize-github-ci ~/.codex/skills/optimize-github-ci
 ln -s /path/to/agent-skills/skills/pr-review-loop ~/.codex/skills/pr-review-loop
 ln -s /path/to/agent-skills/skills/pr-review-once ~/.codex/skills/pr-review-once
 ln -s /path/to/agent-skills/skills/pr-fix-loop ~/.codex/skills/pr-fix-loop
@@ -33,6 +35,7 @@ Pi CLI also discovers skills from `~/.agents/skills`:
 ln -s /path/to/agent-skills/skills/daily-report ~/.agents/skills/daily-report
 ln -s /path/to/agent-skills/skills/weekly-report ~/.agents/skills/weekly-report
 ln -s /path/to/agent-skills/skills/emqx-pr ~/.agents/skills/emqx-pr
+ln -s /path/to/agent-skills/skills/optimize-github-ci ~/.agents/skills/optimize-github-ci
 ln -s /path/to/agent-skills/skills/pr-review-loop ~/.agents/skills/pr-review-loop
 ln -s /path/to/agent-skills/skills/pr-review-once ~/.agents/skills/pr-review-once
 ln -s /path/to/agent-skills/skills/pr-fix-loop ~/.agents/skills/pr-fix-loop
